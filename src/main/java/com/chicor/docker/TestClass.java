@@ -1,0 +1,144 @@
+package com.chicor.docker;
+
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+public class TestClass {
+
+    private WebDriver driver;
+    private Map<String, Object> vars;
+    
+    PageClass pageClass;
+
+    @Parameters({"Port"})
+    @BeforeClass
+    public void initiateDriver(String Port) throws MalformedURLException {
+        if(Port.equalsIgnoreCase("9001"))
+        {
+            driver = new RemoteWebDriver(new URL("http:174.100.144.120:4444/wd/hub"), DesiredCapabilities.chrome());
+            driver.manage().window().maximize();
+        }
+        else if(Port.equalsIgnoreCase("9002")){
+            driver = new RemoteWebDriver(new URL("http:174.100.144.120:4444/wd/hub"), DesiredCapabilities.firefox());
+            driver.manage().window().maximize();
+        }
+
+        pageClass = new PageClass(driver);
+        vars = new HashMap<String, Object>();
+
+    }
+    
+    public String waitForWindow(int timeout) {
+        try {
+          Thread.sleep(timeout);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Set<String> whNow = driver.getWindowHandles();
+        Set<String> whThen = (Set<String>) vars.get("window_handles");
+        if (whNow.size() > whThen.size()) {
+          whNow.removeAll(whThen);
+        }
+        return whNow.iterator().next();
+      }
+
+    @AfterClass
+    public void quitDriver()
+    {
+        driver.quit();
+    }
+
+//----------------------------------------
+    
+    
+    @Parameters("browser")
+	@Test
+	public void GNB(String browser)
+	{
+        driver.get("https://chicor.com/main");
+        driver.manage().window().setSize(new Dimension(1516, 737));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+        driver.findElement(By.linkText("닫기")).click();
+        driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+        driver.findElement(By.linkText("닫기")).click(); 
+        driver.findElement(By.linkText("BEST")).click();
+        driver.findElement(By.linkText("BRANDS")).click();
+        driver.findElement(By.linkText("STORY")).click();
+        driver.findElement(By.linkText("DEAL")).click();
+        driver.findElement(By.linkText("EVENT")).click();
+        driver.close();
+        			
+	}
+   
+    
+    @Parameters("browser")
+	@Test
+	public void login(String browser)
+	{
+        driver.get("https://chicor.com/main");
+        driver.manage().window().setSize(new Dimension(1516, 737));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+        driver.findElement(By.linkText("닫기")).click(); 
+        driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+        driver.findElement(By.linkText("닫기")).click(); 
+      	driver.findElement(By.linkText("로그인")).click();
+      {
+        WebElement element = driver.findElement(By.linkText("로그인"));
+        Actions builder = new Actions(driver);
+        builder.moveToElement(element).perform();
+      }
+      driver.findElement(By.id("lginId")).click();
+      driver.findElement(By.id("lginId")).sendKeys("820104");
+      driver.findElement(By.id("lginPw")).click();
+      driver.findElement(By.id("lginPw")).sendKeys("2359145js>");
+      driver.findElement(By.cssSelector(".btn-login > .btn")).click();
+    }
+
+    
+//카카오 알림이와서 잠시숨김   
+/*
+ * @Parameters("browser")
+ * 
+ * @Test public void loginkakao(String browser) {
+ * driver.get("https://chicor.com/main"); driver.manage().window().setSize(new
+ * Dimension(1516, 737)); driver.manage().timeouts().implicitlyWait(10,
+ * TimeUnit.SECONDS); driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+ * driver.findElement(By.linkText("닫기")).click();
+ * driver.findElement(By.linkText("오늘 하루 보지 않기")).click();
+ * driver.findElement(By.linkText("닫기")).click();
+ * driver.findElement(By.linkText("로그인")).click(); { WebElement element =
+ * driver.findElement(By.cssSelector(".sp-sub-ico-kakao")); Actions builder =
+ * new Actions(driver); builder.moveToElement(element).perform(); }
+ * vars.put("window_handles", driver.getWindowHandles());
+ * driver.findElement(By.cssSelector(".sp-sub-ico-kakao")).click();
+ * vars.put("win5344", waitForWindow(2000)); vars.put("root",
+ * driver.getWindowHandle());
+ * driver.switchTo().window(vars.get("win5344").toString());
+ * driver.findElement(By.id("id_email_2")).sendKeys("yjs0104@gmail.com");
+ * driver.findElement(By.id("id_password_3")).sendKeys("mjjs1381403");
+ * driver.findElement(By.cssSelector(".wrap_btn:nth-child(13) > .btn_confirm")).
+ * click(); driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+ * driver.switchTo().window(vars.get("root").toString());
+ * driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+ * driver.findElement(By.linkText("마이페이지")).click(); driver.close(); }
+ */
+}
